@@ -6,6 +6,7 @@ table {
   border: 1px solid #eeeeee;
   border-radius: 5px;
   box-shadow: 2px 2px 3px #bdbdbd;
+  margin-bottom: 20px;
 }
 
 thead td {
