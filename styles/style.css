@@ -15,6 +15,10 @@ thead td {
   padding: 10px;
 }
 
+tbody tr.hidden {
+  display: none;
+}
+
 tbody td {
   padding: 2px 5px;
 }

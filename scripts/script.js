@@ -19,8 +19,10 @@ class Grid {
     this.data = data;
     this.metadata = metadata;
 
-    // HINT: below map can be useful for view operations ;))
-    this.dataViewRef = new Map();
+    // HINT: below map can be useful for view operations ;)) Array now :P
+    this.dataViewRef = [];
+
+    // This only works in 'use strict'
 
     Object.freeze(this.data);
     Object.freeze(this.metadata);
@@ -62,8 +64,12 @@ class Grid {
         cell.innerText = dataRow[column.id];
       }
 
-      // connect data row reference with view row reference
-      this.dataViewRef.set(dataRow, row);
+      // Prefer arrays than maps
+
+      this.dataViewRef.push({
+        rowElement: row,
+        data: dataRow,
+      });
     }
   }
 
@@ -83,9 +89,7 @@ class Grid {
     resetFunctionButtonElement.addEventListener("click", this.onFunctionsResetClick.bind(this));
   }
 
-  onSearchGo(event) {
-    console.error(`Searching...`);
-  }
+  onSearchGo(event) {}
 
   onSearchChange(event) {
     console.error(`Search button pressed...`);
