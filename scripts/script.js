@@ -20,7 +20,7 @@ class Grid {
     this.metadata = metadata;
 
     // HINT: below map can be useful for view operations ;)) Array now :P
-    this.dataViewRef = [];
+    this.tableData = [];
 
     // This only works in 'use strict'
 
@@ -66,7 +66,7 @@ class Grid {
 
       // Prefer arrays than maps
 
-      this.dataViewRef.push({
+      this.tableData.push({
         rowElement: row,
         data: dataRow,
       });
@@ -75,7 +75,10 @@ class Grid {
 
   live() {
     searchButtonElement.addEventListener("click", this.onSearchGo.bind(this));
-    searchInputElement.addEventListener("keydown", this.onSearchChange.bind(this));
+
+    // There was 'onKeyDown' which is not quite correct, because it fire faster and get old value of inputElement
+
+    searchInputElement.addEventListener("input", this.onSearchChange.bind(this));
     searchResetElement.addEventListener("click", this.onSearchReset.bind(this));
 
     columnHideElement.addEventListener("click", this.onColumnHideClick.bind(this));
@@ -89,47 +92,54 @@ class Grid {
     resetFunctionButtonElement.addEventListener("click", this.onFunctionsResetClick.bind(this));
   }
 
-  onSearchGo(event) {}
+  onSearchGo(event) {
+    const currentInputElementValue = searchInputElement.value.toLowerCase();
+
+    this.tableData.forEach((tableDataObject) => {
+      const { data: rowData, rowElement } = tableDataObject;
+
+      const matchingData = Object.values(rowData).find((rowDataValue) => {
+        if (rowDataValue) {
+          const currentRowData = rowDataValue.toString().toLowerCase();
+
+          if (currentRowData.toString().includes(currentInputElementValue)) {
+            return rowDataValue;
+          }
+        }
+      });
+
+      if (!matchingData) {
+        rowElement.classList.add("hidden");
+      } else if (rowElement.className.includes("hidden")) {
+        rowElement.classList.remove("hidden");
+      }
+    });
+  }
 
   onSearchChange(event) {
-    console.error(`Search button pressed...`);
+    this.onSearchGo();
   }
 
   onSearchReset(event) {
-    console.error(`Resetting search...`);
+    searchInputElement.value = "";
+    this.onSearchGo();
   }
 
-  onColumnHideClick(event) {
-    console.error(`Hiding first visible column from the left...`);
-  }
+  onColumnHideClick(event) {}
 
-  onColumnShowClick(event) {
-    console.error(`Showing first hidden column from the left...`);
-  }
+  onColumnShowClick(event) {}
 
-  onColumnReset(event) {
-    console.error(`Resetting column visibility...`);
-  }
+  onColumnReset(event) {}
 
-  onMarkEmptyClick(event) {
-    console.error(`Marking empty cells...`);
-  }
+  onMarkEmptyClick(event) {}
 
-  onFillTableClick(event) {
-    console.error(`Filling empty cells with data...`);
-  }
+  onFillTableClick(event) {}
 
-  onCountEmptyClick(event) {
-    console.error(`Counting amount of empty cells...`);
-  }
+  onCountEmptyClick(event) {}
 
-  onComputeTotalsClick(event) {
-    console.error(`Computing summary totals...`);
-  }
+  onComputeTotalsClick(event) {}
 
-  onFunctionsResetClick(event) {
-    console.error(`Resetting all function...`);
-  }
+  onFunctionsResetClick(event) {}
 }
 
 new Grid();
