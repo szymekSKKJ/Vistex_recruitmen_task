@@ -130,7 +130,7 @@ class Grid {
 
   hideOrShowFirstColumn(type = "hide") {
     const tableHeadLength = [...this.head.firstChild.children].length;
-    if (type === "hide" && this.hiddenColumnsCount < tableHeadLength - 1) {
+    if (type === "hide" && this.hiddenColumnsCount < tableHeadLength) {
       [...this.head.firstChild.children][this.hiddenColumnsCount].classList.add("hidden");
       this.hiddenColumnsCount++;
     }
@@ -139,15 +139,15 @@ class Grid {
       this.tableData.forEach((tableDataObject) => {
         const { rowElement } = tableDataObject;
 
-        const columnElement = [...rowElement.children].find((tableDataElement) => this.hiddenColumnsCount - 1 === parseInt(tableDataElement.dataset.column));
+        const columnElement = [...rowElement.children].find((columnElement) => parseInt(columnElement.dataset.column) === this.hiddenColumnsCount - 1);
 
         type === "hide" ? columnElement.classList.add("hidden") : columnElement.classList.remove("hidden");
       });
-    }
 
-    if (type === "show" && this.hiddenColumnsCount > 0) {
-      [...this.head.firstChild.children][this.hiddenColumnsCount - 1].classList.remove("hidden");
-      this.hiddenColumnsCount--;
+      if (type === "show" && this.hiddenColumnsCount > 0) {
+        [...this.head.firstChild.children][this.hiddenColumnsCount - 1].classList.remove("hidden");
+        this.hiddenColumnsCount--;
+      }
     }
   }
 
