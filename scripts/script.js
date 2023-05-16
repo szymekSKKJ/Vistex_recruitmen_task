@@ -18,6 +18,7 @@ class Grid {
   constructor() {
     this.data = data;
     this.metadata = metadata;
+    this.hiddenColumnsCount = 0;
 
     // HINT: below map can be useful for view operations ;)) Array now :P
     this.tableData = [];
@@ -104,7 +105,7 @@ class Grid {
         if (rowDataValue) {
           const currentRowData = rowDataValue.toString().toLowerCase();
 
-          if (currentRowData.toString().includes(currentInputElementValue)) {
+          if (currentRowData.includes(currentInputElementValue)) {
             return rowDataValue;
           }
         }
@@ -112,7 +113,7 @@ class Grid {
 
       if (!matchingData) {
         rowElement.classList.add("hidden");
-      } else if (rowElement.className.includes("hidden")) {
+      } else {
         rowElement.classList.remove("hidden");
       }
     });
@@ -127,11 +128,49 @@ class Grid {
     this.onSearchGo();
   }
 
-  onColumnHideClick(event) {}
+  hideOrShowFirstColumn(type = "hide") {
+    const tableHeadLength = [...this.head.firstChild.children].length;
+    if (type === "hide" && this.hiddenColumnsCount < tableHeadLength - 1) {
+      [...this.head.firstChild.children][this.hiddenColumnsCount].classList.add("hidden");
+      this.hiddenColumnsCount++;
+    }
 
-  onColumnShowClick(event) {}
+    if (this.hiddenColumnsCount !== 0) {
+      this.tableData.forEach((tableDataObject) => {
+        const { rowElement } = tableDataObject;
 
-  onColumnReset(event) {}
+        const columnElement = [...rowElement.children].find((tableDataElement) => this.hiddenColumnsCount - 1 === parseInt(tableDataElement.dataset.column));
+
+        type === "hide" ? columnElement.classList.add("hidden") : columnElement.classList.remove("hidden");
+      });
+    }
+
+    if (type === "show" && this.hiddenColumnsCount > 0) {
+      [...this.head.firstChild.children][this.hiddenColumnsCount - 1].classList.remove("hidden");
+      this.hiddenColumnsCount--;
+    }
+  }
+
+  onColumnHideClick(event) {
+    this.hideOrShowFirstColumn("hide");
+  }
+
+  onColumnShowClick(event) {
+    this.hideOrShowFirstColumn("show");
+  }
+
+  onColumnReset(event) {
+    this.hiddenColumnsCount = 0;
+
+    this.tableData.forEach((tableDataObject) => {
+      const { rowElement } = tableDataObject;
+
+      [...rowElement.children].forEach((tableDataElement, index) => {
+        [...this.head.firstChild.children][index].classList.remove("hidden");
+        tableDataElement.classList.remove("hidden");
+      });
+    });
+  }
 
   onMarkEmptyClick(event) {}
 

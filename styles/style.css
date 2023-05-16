@@ -15,7 +15,8 @@ thead td {
   padding: 10px;
 }
 
-tbody tr.hidden {
+table tr.hidden,
+table tr td.hidden {
   display: none;
 }
 
