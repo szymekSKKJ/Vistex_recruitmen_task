@@ -46,23 +46,25 @@ class Grid {
   renderHead() {
     const row = this.head.insertRow();
 
-    for (const column of this.metadata) {
+    this.metadata.forEach((column, index) => {
       const cell = row.insertCell();
 
       cell.innerText = column.label;
-    }
+      cell.dataset.column = `${index}`;
+    });
   }
 
   renderBody() {
     for (const dataRow of this.data) {
       const row = this.body.insertRow();
 
-      for (const column of this.metadata) {
+      this.metadata.forEach((column, index) => {
         const cell = row.insertCell();
 
         cell.classList.add(column.type);
+        cell.dataset.column = `${index}`;
         cell.innerText = dataRow[column.id];
-      }
+      });
 
       // Prefer arrays than maps
 
