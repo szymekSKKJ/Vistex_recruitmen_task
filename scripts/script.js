@@ -172,7 +172,19 @@ class Grid {
     });
   }
 
-  onMarkEmptyClick(event) {}
+  onMarkEmptyClick(event) {
+    this.tableData.forEach((tableDataObject) => {
+      const { data, rowElement } = tableDataObject;
+
+      Object.keys(data).forEach((value, index) => {
+        if (data[value] === null) {
+          const childElement = [...rowElement.children][index];
+
+          childElement.classList.add("marked");
+        }
+      });
+    });
+  }
 
   onFillTableClick(event) {}
 
@@ -180,7 +192,22 @@ class Grid {
 
   onComputeTotalsClick(event) {}
 
-  onFunctionsResetClick(event) {}
+  removeMarkedTableCells() {
+    this.tableData.forEach((tableDataObject) => {
+      const { data, rowElement } = tableDataObject;
+
+      Object.keys(data).forEach((value, index) => {
+        const childElement = [...rowElement.children][index];
+        if (childElement.className.includes("marked")) {
+          childElement.classList.remove("marked");
+        }
+      });
+    });
+  }
+
+  onFunctionsResetClick(event) {
+    this.removeMarkedTableCells();
+  }
 }
 
 new Grid();

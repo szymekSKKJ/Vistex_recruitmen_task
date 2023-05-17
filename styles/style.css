@@ -20,6 +20,10 @@ table tr td.hidden {
   display: none;
 }
 
+table tr td.marked {
+  border: solid 2px red;
+}
+
 tbody td {
   padding: 2px 5px;
 }
