@@ -16,7 +16,7 @@ const resetFunctionButtonElement = document.body.querySelector("button.function-
 
 class Grid {
   constructor() {
-    this.data = data;
+    this.data = structuredClone(data); // Deep copy
     this.metadata = metadata;
     this.hiddenColumnsCount = 0;
 
@@ -204,17 +204,34 @@ class Grid {
 
           if (key === "total_value") {
             cellElement.innerText = `${quantity * unitPrice}`;
+            data[key] = quantity * unitPrice;
           } else if (key === "unit_price") {
             cellElement.innerText = `${totalValue / quantity}`;
+            data[key] = totalValue / quantity;
           } else if (key === "quantity") {
             cellElement.innerText = `${totalValue / unitPrice}`;
+            data[key] = totalValue / unitPrice;
           }
         }
       });
     });
   }
 
-  onCountEmptyClick(event) {}
+  onCountEmptyClick(event) {
+    let counter = 0;
+
+    this.tableData.forEach((tableDataObject) => {
+      const { data, rowElement } = tableDataObject;
+
+      Object.keys(data).forEach((key, index) => {
+        if (data[key] === null) {
+          counter++;
+        }
+      });
+    });
+
+    window.alert(`Found ${counter} empty cells`);
+  }
 
   onComputeTotalsClick(event) {}
 
@@ -232,13 +249,17 @@ class Grid {
   }
 
   removeAutoFilledData() {
-    this.tableData.forEach((tableDataObject) => {
-      const { data, rowElement } = tableDataObject;
+    data.forEach((dataObject, rowIndex) => {
+      const currentDataRow = data[rowIndex];
 
-      Object.keys(data).forEach((key, index) => {
-        const childElement = [...rowElement.children][index];
+      Object.keys(currentDataRow).forEach((key, index) => {
+        if (currentDataRow[key] === null) {
+          const childElement = [...this.tableData[rowIndex].rowElement.children][index];
 
-        if (data[key] === null) {
+          // Reseting deep cloned data to initial state
+
+          this.tableData[rowIndex]["data"][key] = null;
+
           childElement.innerText = "";
         }
       });

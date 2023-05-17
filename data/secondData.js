@@ -66,7 +66,7 @@ export const data = [
 ];
 
 // additionalMetadataFromBooksDB
-const metadata = [
+export const metadata = [
   {
     id: "title",
     type: "string",
