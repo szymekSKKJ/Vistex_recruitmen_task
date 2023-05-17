@@ -233,7 +233,24 @@ class Grid {
     window.alert(`Found ${counter} empty cells`);
   }
 
-  onComputeTotalsClick(event) {}
+  onComputeTotalsClick(event) {
+    const isAnyCellEmpty = this.data.find((dataObject) => Object.values(dataObject).some((value) => value === null));
+
+    if (isAnyCellEmpty) {
+      window.alert("First fill all the cells");
+    } else {
+      let sumOfTotal = 0;
+      this.data.forEach((dataObject) => {
+        Object.keys(dataObject).forEach((key) => {
+          if (key === "total_value") {
+            sumOfTotal += parseInt(dataObject[key]);
+          }
+        });
+      });
+
+      window.alert(`Total sum is: ${sumOfTotal}`);
+    }
+  }
 
   removeMarkedTableCells() {
     this.tableData.forEach((tableDataObject) => {
