@@ -1,4 +1,5 @@
 import { data, metadata } from "../data/firstData.js";
+import { data as secondData, metadata as secondMetaData } from "../data/SecondData.js";
 
 const searchInputElement = document.body.querySelector("input.search-input");
 const searchButtonElement = document.body.querySelector("button.search-go");
@@ -131,7 +132,9 @@ class Grid {
   hideOrShowFirstColumn(type = "hide") {
     const tableHeadLength = [...this.head.firstChild.children].length;
     if (type === "hide" && this.hiddenColumnsCount < tableHeadLength) {
-      [...this.head.firstChild.children][this.hiddenColumnsCount].classList.add("hidden");
+      const currentHeadColumnCellElement = [...this.head.firstChild.children][this.hiddenColumnsCount];
+
+      currentHeadColumnCellElement.classList.add("hidden");
       this.hiddenColumnsCount++;
     }
 
@@ -139,13 +142,14 @@ class Grid {
       this.tableData.forEach((tableDataObject) => {
         const { rowElement } = tableDataObject;
 
-        const columnElement = [...rowElement.children].find((columnElement) => parseInt(columnElement.dataset.column) === this.hiddenColumnsCount - 1);
+        const columnCellElement = [...rowElement.children].find((columnElement) => parseInt(columnElement.dataset.column) === this.hiddenColumnsCount - 1);
 
-        type === "hide" ? columnElement.classList.add("hidden") : columnElement.classList.remove("hidden");
+        type === "hide" ? columnCellElement.classList.add("hidden") : columnCellElement.classList.remove("hidden");
       });
 
       if (type === "show" && this.hiddenColumnsCount > 0) {
-        [...this.head.firstChild.children][this.hiddenColumnsCount - 1].classList.remove("hidden");
+        const currentHeadColumnCellElement = [...this.head.firstChild.children][this.hiddenColumnsCount - 1];
+        currentHeadColumnCellElement.classList.remove("hidden");
         this.hiddenColumnsCount--;
       }
     }
@@ -160,16 +164,12 @@ class Grid {
   }
 
   onColumnReset(event) {
-    this.hiddenColumnsCount = 0;
+    const tableHeadLength = [...this.head.firstChild.children].length;
+    const currentHiddenColumnsCount = this.hiddenColumnsCount;
 
-    this.tableData.forEach((tableDataObject) => {
-      const { rowElement } = tableDataObject;
-
-      [...rowElement.children].forEach((tableDataElement, index) => {
-        [...this.head.firstChild.children][index].classList.remove("hidden");
-        tableDataElement.classList.remove("hidden");
-      });
-    });
+    for (let i = 0; i <= currentHiddenColumnsCount - 1; i++) {
+      this.hideOrShowFirstColumn("show");
+    }
   }
 
   onMarkEmptyClick(event) {
@@ -192,24 +192,30 @@ class Grid {
     this.tableData.forEach((tableDataObject) => {
       const { data, rowElement } = tableDataObject;
 
-      Object.keys(data).forEach((key, index, array) => {
+      Object.keys(data).forEach((key, index) => {
         const quantity = data["quantity"];
         const unitPrice = data["unit_price"];
         const totalValue = data["total_value"];
 
-        // The data is sorted that's why I can use index of children
-
         if (data[key] === null) {
+          // The data is sorted that's why I can use index of children
           const cellElement = [...rowElement.children][index];
 
+          // All assignments (data[key]) are of deep clone data (this.data)
+
           if (key === "total_value") {
-            cellElement.innerText = `${quantity * unitPrice}`;
+            const cellValue = quantity * unitPrice;
+
+            cellElement.innerText = `${cellValue}`;
             data[key] = quantity * unitPrice;
           } else if (key === "unit_price") {
-            cellElement.innerText = `${totalValue / quantity}`;
+            const cellValue = totalValue / quantity;
+
+            cellElement.innerText = `${cellValue}`;
             data[key] = totalValue / quantity;
           } else if (key === "quantity") {
-            cellElement.innerText = `${totalValue / unitPrice}`;
+            const cellValue = totalValue / unitPrice;
+            cellElement.innerText = `${cellValue}`;
             data[key] = totalValue / unitPrice;
           }
         }
@@ -221,9 +227,9 @@ class Grid {
     let counter = 0;
 
     this.tableData.forEach((tableDataObject) => {
-      const { data, rowElement } = tableDataObject;
+      const { data } = tableDataObject;
 
-      Object.keys(data).forEach((key, index) => {
+      Object.keys(data).forEach((key) => {
         if (data[key] === null) {
           counter++;
         }
@@ -240,6 +246,7 @@ class Grid {
       window.alert("First fill all the cells");
     } else {
       let sumOfTotal = 0;
+
       this.data.forEach((dataObject) => {
         Object.keys(dataObject).forEach((key) => {
           if (key === "total_value") {
@@ -275,7 +282,9 @@ class Grid {
 
           // Reseting deep cloned data to initial state
 
-          this.tableData[rowIndex]["data"][key] = null;
+          const cellValue = this.tableData[rowIndex]["data"][key];
+
+          cellValue = null;
 
           childElement.innerText = "";
         }
