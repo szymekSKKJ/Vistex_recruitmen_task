@@ -176,17 +176,43 @@ class Grid {
     this.tableData.forEach((tableDataObject) => {
       const { data, rowElement } = tableDataObject;
 
-      Object.keys(data).forEach((value, index) => {
-        if (data[value] === null) {
-          const childElement = [...rowElement.children][index];
+      Object.keys(data).forEach((key, index) => {
+        if (data[key] === null) {
+          // The data is sorted that's why I can use index of children
 
-          childElement.classList.add("marked");
+          const cellElement = [...rowElement.children][index];
+
+          cellElement.classList.add("marked");
         }
       });
     });
   }
 
-  onFillTableClick(event) {}
+  onFillTableClick(event) {
+    this.tableData.forEach((tableDataObject) => {
+      const { data, rowElement } = tableDataObject;
+
+      Object.keys(data).forEach((key, index, array) => {
+        const quantity = data["quantity"];
+        const unitPrice = data["unit_price"];
+        const totalValue = data["total_value"];
+
+        // The data is sorted that's why I can use index of children
+
+        if (data[key] === null) {
+          const cellElement = [...rowElement.children][index];
+
+          if (key === "total_value") {
+            cellElement.innerText = `${quantity * unitPrice}`;
+          } else if (key === "unit_price") {
+            cellElement.innerText = `${totalValue / quantity}`;
+          } else if (key === "quantity") {
+            cellElement.innerText = `${totalValue / unitPrice}`;
+          }
+        }
+      });
+    });
+  }
 
   onCountEmptyClick(event) {}
 
@@ -196,7 +222,7 @@ class Grid {
     this.tableData.forEach((tableDataObject) => {
       const { data, rowElement } = tableDataObject;
 
-      Object.keys(data).forEach((value, index) => {
+      Object.keys(data).forEach((key, index) => {
         const childElement = [...rowElement.children][index];
         if (childElement.className.includes("marked")) {
           childElement.classList.remove("marked");
@@ -205,8 +231,23 @@ class Grid {
     });
   }
 
+  removeAutoFilledData() {
+    this.tableData.forEach((tableDataObject) => {
+      const { data, rowElement } = tableDataObject;
+
+      Object.keys(data).forEach((key, index) => {
+        const childElement = [...rowElement.children][index];
+
+        if (data[key] === null) {
+          childElement.innerText = "";
+        }
+      });
+    });
+  }
+
   onFunctionsResetClick(event) {
     this.removeMarkedTableCells();
+    this.removeAutoFilledData();
   }
 }
 
